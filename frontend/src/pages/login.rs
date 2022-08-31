@@ -1,11 +1,12 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+mod user_data;
+
 mod login_in;
 mod login_up;
 
 mod login_success;
-mod login_error;
 
 mod route;
 
@@ -16,19 +17,19 @@ pub(super) fn login() -> Html {
                 style="
                 box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.445);
                 background-color: rgb(19, 19, 19);
-                padding: 10px 20px 10px 20px;
-                flex-direction: column;
                 align-items: center;
                 position: absolute;
-                border-radius: 5px;
                 display: flex;
-                width: 400px;
+                flex-direction: column;
+                border-radius: 5px;
                 margin: auto;
+                padding: 10px 20px 10px 20px;
+                width: 400px;
                 height: 70%;
-                bottom: 0;
-                right: 0;
                 top: 10%;
+                bottom: 0;
                 left: 0;
+                right: 0;
             "
             >
                 <BrowserRouter>
