@@ -16,7 +16,6 @@ services:
             dockerfile: Dockerfile
         expose:
             - "3030"
-        links:
 
     web:
         build:
