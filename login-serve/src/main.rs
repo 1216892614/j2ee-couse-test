@@ -15,7 +15,7 @@ async fn main() {
 
     let login = login_in.or(login_up).with(warp::log("LOGIN"));
 
-    warp::serve(login).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(login).run(([0, 0, 0, 0], 3030)).await;
 }
 
 fn login_in(username: String, password: String, timestamp: String) -> String {

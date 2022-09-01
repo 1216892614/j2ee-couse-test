@@ -1,40 +1,29 @@
-# Use root/example as user/password credentials
 version: 'v0.0.1'
 
 services:
     mongo:
         image: mongo
-        restart: always
-        ports:
-            - "27017:27017"
-        networks:
-            backend:
-                ipv4_address: 127.17.0.2
+        restart: "always"
+        expose:
+            - "27017"
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: password
 
-    web:
-        build: /frontend/Dockerfile
-        expose:
-            - 8080
-        networks:
-            frontend:
-                ipv4_address: 127.17.0.3
-
     login_serve:
-        build: #TODO
-        ports:
-            - "3030:3030"
-        networks:
-            backend:
-                ipv4_address: 127.17.0.4
-            frontend:
-                ipv4_address: 127.17.0.4
-    
+        build:
+            context: login-serve
+            dockerfile: Dockerfile
+        expose:
+            - "3030"
+        links:
 
-networks:
-    backend:
-        driver: bridge
-    frontend:
-        driver: bridge
+    web:
+        build:
+            context: frontend
+            dockerfile: Dockerfile
+        ports:
+            - "80:80"
+        links:
+            - "login_serve"
+            - "mongo"

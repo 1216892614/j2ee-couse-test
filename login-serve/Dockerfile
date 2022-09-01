@@ -1,25 +1,31 @@
 FROM rust:1.63.0-buster as builder
 
-COPY /conf /tmp/
+COPY /conf/* /tmp/
 RUN cd ~ \
-    && mv /tmp/conf/config /usr/local/cargo/ \
+    && mv /tmp/config /usr/local/cargo/ \
     && export RUSTUP_DIST_SERVER="https://rsproxy.cn" \
     && export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup" \
-    && cargo new --bin login-serve
+    && cargo new login-serve
 WORKDIR /root/login-serve
-ADD ./* ./*
+
+COPY ./Cargo.toml ./Cargo.toml
+
+RUN cargo build --release \
+  && rm src/*.rs target/release/deps/login_serve*
+
+ADD . ./
 RUN cargo build --release
 
 FROM debian:buster-slim
 
 ARG APP=/usr/src/app
-COPY --from=builder /tmp/conf/sources.list /etc/apt/sources.list
+COPY --from=builder /tmp/sources.list /etc/apt/sources.list
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 #test
-EXPOSE 8080
+EXPOSE 3030
 
 ENV TZ=Etc/UTC \
     APP_USER=appuser
