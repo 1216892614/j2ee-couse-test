@@ -15,14 +15,25 @@ services:
             context: login-serve
             dockerfile: Dockerfile
         expose:
-            - "3030"
+            - "80"
+        links:
+            - "mongo"
 
-    web:
+    page_serve:
         build:
-            context: frontend
+            context: page-serve
             dockerfile: Dockerfile
+        expose:
+            - "80"
+
+    gateway:
+        build:
+            context: gateway
+            dockerfile: Dockerfile
+        expose:
+            - "80"
         ports:
             - "80:80"
         links:
+            - "page_serve"
             - "login_serve"
-            - "mongo"

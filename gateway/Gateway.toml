@@ -1,0 +1,15 @@
+[[listens]]
+enable = "release"
+url = "0.0.0.0:80"
+
+[[listens]]
+enable = "debug"
+url = "127.0.0.1:5050"
+
+[[proxys]]
+backend = "http://page_serve:80/"
+rewrite = "/"
+
+[[proxys]]
+backend = "http://login_serve:80/"
+rewrite = "/login/request"

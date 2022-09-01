@@ -1,5 +1,7 @@
-use gloo::{dialogs::alert, net::http::Request, console::log};
+use gloo::{console::log, dialogs::alert, net::http::Request};
 use yew::UseStateHandle;
+
+use crate::api::LOGIN_SERVE;
 
 #[derive(Debug, Clone)]
 pub(super) struct User {
@@ -53,8 +55,8 @@ impl User {
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_login_result: String = Request::get(
                     &(format!(
-                        "http://127.0.0.1:8080/login/request/login_in/{}/{}/{}",
-                        username, password, timestamp
+                        "{}/login_in/{}/{}/{}",
+                        LOGIN_SERVE, username, password, timestamp
                     )),
                 )
                 .send()
@@ -82,8 +84,8 @@ impl User {
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_login_result: String = Request::get(
                     &(format!(
-                        "http://127.0.0.1:8080/login/request/login_up/{}/{}/{}",
-                        username, password, timestamp
+                        "{}/login_up/{}/{}/{}",
+                        LOGIN_SERVE, username, password, timestamp
                     )),
                 )
                 .send()
