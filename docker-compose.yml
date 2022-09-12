@@ -1,4 +1,4 @@
-version: 'v0.0.1'
+version: "v0.0.1"
 
 services:
     mongo:
@@ -18,6 +18,8 @@ services:
             - "80"
         links:
             - "mongo"
+        labels:
+            - "traefik.http.routers.to-login.rule=PathPrefix(`/login/request`)"
 
     page_serve:
         build:
@@ -25,15 +27,19 @@ services:
             dockerfile: Dockerfile
         expose:
             - "80"
+        labels:
+            - "traefik.http.routers.to-page.rule=PathPrefix(`/`)"
 
-    gateway:
-        build:
-            context: gateway
-            dockerfile: Dockerfile
-        expose:
-            - "80"
+    reverse-proxy:
+        # The official v2 Traefik docker image
+        image: traefik:v2.8
+        # Enables the web UI and tells Traefik to listen to docker
+        command: --api.insecure=true --providers.docker
         ports:
+            # The HTTP port
             - "80:80"
-        links:
-            - "page_serve"
-            - "login_serve"
+            # The Web UI (enabled by --api.insecure=true)
+            - "8080:8080"
+        volumes:
+            # So that Traefik can listen to the Docker events
+            - /var/run/docker.sock:/var/run/docker.sock

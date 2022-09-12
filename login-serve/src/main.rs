@@ -19,9 +19,9 @@ async fn main() {
     init_custom_env("LOGIN_SERVE_LOG");
 
     // GET /login_in/:username/:password/:timestamp
-    let login_in = warp::path!("login_in" / String / String / String).map(login_in);
+    let login_in = warp::path!("login" / "request" / "login_in" / String / String / String).map(login_in);
 
-    let login_up = warp::path!("login_up" / String / String / String).map(login_up);
+    let login_up = warp::path!("login" / "request" / "login_up" / String / String / String).map(login_up);
 
     let login = login_in.or(login_up).with(warp::log("LOGIN"));
 

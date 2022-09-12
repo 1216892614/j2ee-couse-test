@@ -1,6 +1,5 @@
 [workspace]
 members = [
-  "gateway",
   "login-serve",
   "page-serve",
   "page-serve/web",
