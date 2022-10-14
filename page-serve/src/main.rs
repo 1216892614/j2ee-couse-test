@@ -5,7 +5,7 @@ use warp::Filter;
 
 #[cfg(debug_assertions)]
 const fn ipv4() -> ([u8;4], u16) {
-    ([127, 0, 0, 1], 3030)
+    ([127, 0, 0, 1], 5050)
 }
 
 #[cfg(not(debug_assertions))]

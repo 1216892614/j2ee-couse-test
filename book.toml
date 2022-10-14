@@ -1,0 +1,9 @@
+[book]
+authors = ["Nerd"]
+language = "ch"
+multilingual = false
+src = "doc"
+title = "J2EE_dev_doc"
+
+[build]
+build-dir = "./target/md_doc"
