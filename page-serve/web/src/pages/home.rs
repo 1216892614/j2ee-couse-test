@@ -1,37 +1,13 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::component::main_header;
+
 #[function_component(Home)]
 pub(super) fn home() -> Html {
     html! {
         <>
-            <div class="top">
-                <center>
-                    <ul>
-                        <li>
-                            <Link<super::route::AppRoute>
-                                to={super::route::AppRoute::Home}
-                            >
-                                { "J2EE Course Test" }
-                            </Link<super::route::AppRoute>>
-                        </li>
-                        <li>
-                            <Link<super::route::AppRoute>
-                                to={super::route::AppRoute::NotFound}
-                            >
-                                { "NotFound" }
-                            </Link<super::route::AppRoute>>
-                        </li>
-                        <li>
-                            <Link<super::route::AppRoute>
-                                to={super::route::AppRoute::Login}
-                            >
-                                { "登录" }
-                            </Link<super::route::AppRoute>>
-                        </li>
-                    </ul>
-                </center>
-            </div>
+            <main_header::MainHeader/>
 
             <center>
                 <h1

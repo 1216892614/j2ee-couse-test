@@ -14,6 +14,7 @@ js-sys = "0.3.59"
 yew-router = "0.16.0"
 wasm-bindgen = "0.2.82"
 wasm-bindgen-futures = "0.4.32"
+cryptoxide = "0.4.2"
 
 [dependencies.web-sys]
 features = ["HtmlInputElement"]

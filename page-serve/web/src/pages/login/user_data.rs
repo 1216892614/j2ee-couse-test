@@ -49,22 +49,22 @@ impl User {
     pub(super) fn login_in_request(&self, login_state: UseStateHandle<String>) {
         if self.is_password_and_username_valid() {
             let username = self.username.clone();
-            let password = self.password.clone();
-            let timestamp = js_sys::Date::new_0().get_time().to_string();
+            let timestamp = js_sys::Date::new_0().get_time();
+            let password = Self::fmt_vec_u8_2_hex(&self.blake2b_psw_mac(timestamp));
+
+            let url = format!(
+                "{}/login_in/{}/{}/{}",
+                LOGIN_SERVE, username, password, timestamp
+            );
 
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_login_result: String = Request::get(
-                    &(format!(
-                        "{}/login_in/{}/{}/{}",
-                        LOGIN_SERVE, username, password, timestamp
-                    )),
-                )
-                .send()
-                .await
-                .unwrap()
-                .json()
-                .await
-                .expect("cannot deserialization ans from .../login/request/login_in/ request");
+                let fetched_login_result: String = Request::post(&url)
+                    .send()
+                    .await
+                    .expect("cannot deserialization ans from .../login/request/login_in/ request")
+                    .json()
+                    .await
+                    .expect("cannot deserialization ans from .../login/request/login_in/ request");
 
                 log!(&fetched_login_result);
 
@@ -78,11 +78,11 @@ impl User {
     pub(super) fn login_up_request(&self, login_state: UseStateHandle<String>) {
         if self.is_password_and_username_valid() {
             let username = self.username.clone();
-            let password = self.password.clone();
-            let timestamp = js_sys::Date::new_0().get_time().to_string();
+            let timestamp = js_sys::Date::new_0().get_time();
+            let password = Self::fmt_vec_u8_2_hex(&self.blake2b_256_psw());
 
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_login_result: String = Request::get(
+                let fetched_login_result: String = Request::post(
                     &(format!(
                         "{}/login_up/{}/{}/{}",
                         LOGIN_SERVE, username, password, timestamp
@@ -100,5 +100,50 @@ impl User {
         } else {
             alert("账号长度应在 3~125 之间\n密码需包含大小写和一个字符, 长度在 8~125 之间")
         }
+    }
+
+    fn blake2b_256_psw(&self) -> [u8; 32] {
+        use cryptoxide::{blake2b::Blake2b, digest::Digest};
+
+        let mut digest = [0u8; 32];
+        let mut context = Blake2b::new(32);
+        context.input(self.password.as_bytes());
+        context.result(&mut digest);
+
+        digest
+    }
+
+    fn blake2b_psw_mac(&self, timestamp: f64) -> Vec<u8> {
+        use cryptoxide::{blake2b::Blake2b, mac::Mac};
+
+        let mut key: [u8; 16] = [3, 4, 10, 11, 12, 13, 14, 0, 1, 2, 15, 5, 6, 7, 8, 9];
+        for (n, i) in timestamp.to_string().chars().enumerate() {
+            if n < 16 {
+                if let Ok(i) = i.to_string().parse::<u8>() {
+                    key[15 - n] = i;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        let mut context = Blake2b::new_keyed(28, &key);
+        context.input(&self.blake2b_256_psw());
+
+        context.result().code().to_ascii_lowercase()
+    }
+
+    fn fmt_vec_u8_2_hex(v: &[u8]) -> String {
+        v.into_iter()
+            .enumerate()
+            .fold(String::new(), |acc, (n, i)| {
+                let mut acc = acc;
+                if n == 0 {
+                    acc += &format!("{:x}", i);
+                } else {
+                    acc += &format!(",{:x}", i);
+                }
+                acc
+            })
     }
 }

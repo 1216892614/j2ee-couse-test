@@ -1,9 +1,14 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
+
+use crate::component::main_header;
 
 #[function_component(NotFound)]
 pub(super) fn not_found() -> Html {
     html! {
         <>
+            <main_header::MainHeader/>
+
             <center>
                 <h1
                     style="
