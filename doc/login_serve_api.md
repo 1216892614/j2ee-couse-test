@@ -14,14 +14,7 @@ labels:
 
 - **请求方式:** post
 
-- **返回格式**
-    ```json
-    {
-        "time_stamp": f64, // 时间戳
-        "is_scss": bool,   // 是否成功
-        "msg": String      // 额外信息
-    }
-    ```
+- **返回格式:** JWT
 
 - 备注
     - 校验时间戳
@@ -38,16 +31,9 @@ labels:
 
 - **请求方式:** post
 
-- **返回格式**
-    ```json
-    {
-        "time_stamp": f64,           // 时间戳
-        "is_scss": bool,             // 是否成功
-        "jwt": Option<JsonWebToken>, // 请求失败为 None
-        "msg": String                // 额外信息
-    }
-    ```
+- **返回格式:** JWT
 
 - 备注
     - 校验时间戳
-    - 成功返回 JWT
+    - 生成活动凭证
+    - 返回 JWT, 持久化凭证

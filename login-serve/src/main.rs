@@ -3,13 +3,17 @@ use std::env;
 use pretty_env_logger::init_custom_env;
 use warp::Filter;
 
+mod login_in;
+mod login_up;
+mod static_setting;
+
 #[cfg(debug_assertions)]
-const fn ipv4() -> ([u8;4], u16) {
+const fn ipv4() -> ([u8; 4], u16) {
     ([127, 0, 0, 1], 4040)
 }
 
 #[cfg(not(debug_assertions))]
-const fn ipv4() -> ([u8;4], u16) {
+const fn ipv4() -> ([u8; 4], u16) {
     ([0, 0, 0, 0], 80)
 }
 
@@ -19,19 +23,13 @@ async fn main() {
     init_custom_env("LOGIN_SERVE_LOG");
 
     // POST /.../:username/:password/:timestamp
-    let login_in = warp::path!("login" / "request" / "login_in" / String / String / f64).map(login_in);
+    let login_in = warp::path!("login" / "request" / "login_in" / String / String / f64)
+        .map(login_in::login_in);
 
-    let login_up = warp::path!("login" / "request" / "login_up" / String / String / f64).map(login_up);
+    let login_up = warp::path!("login" / "request" / "login_up" / String / String / f64)
+        .map(login_up::login_up);
 
     let login = login_in.or(login_up).with(warp::log("LOGIN"));
 
     warp::serve(login).run(ipv4()).await;
-}
-
-fn login_in(username: String, password: String, timestamp: f64) -> String {
-    format!("\"success, {}, {}, {}\"", username, password, timestamp)
-}
-
-fn login_up(username: String, password: String, timestamp: f64) -> String {
-    format!("\"success, {}, {}, {}\"", username, password, timestamp)
 }

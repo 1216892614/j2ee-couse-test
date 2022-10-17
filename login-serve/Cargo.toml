@@ -1,13 +1,17 @@
 [package]
+edition = "2021"
 name = "login-serve"
 version = "0.1.0"
-edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-log = "0.4.17"
-pretty_env_logger = "0.4.0"
-tokio = { version = "1.20.1", features = ["full"] }
-warp = "0.3.2"
 cryptoxide = "0.4.2"
+jsonwebtoken = "8.1.1"
+log = "0.4.17"
+mongod = {version = "0.3.1", features = ["derive"]}
+pretty_env_logger = "0.4.0"
+serde = {version = "1.0.145", features = ["derive"]}
+serde_json = "1.0.86"
+tokio = {version = "1.20.1", features = ["full"]}
+warp = "0.3.2"

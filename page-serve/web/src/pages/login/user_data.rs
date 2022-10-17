@@ -48,7 +48,7 @@ impl User {
 
     pub(super) fn login_in_request(&self, login_state: UseStateHandle<String>) {
         if self.is_password_and_username_valid() {
-            let username = self.username.clone();
+            let username = Self::fmt_vec_u8_2_hex(&self.username.as_bytes());
             let timestamp = js_sys::Date::new_0().get_time();
             let password = Self::fmt_vec_u8_2_hex(&self.blake2b_psw_mac(timestamp));
 
@@ -77,7 +77,7 @@ impl User {
 
     pub(super) fn login_up_request(&self, login_state: UseStateHandle<String>) {
         if self.is_password_and_username_valid() {
-            let username = self.username.clone();
+            let username = Self::fmt_vec_u8_2_hex(&self.username.as_bytes());
             let timestamp = js_sys::Date::new_0().get_time();
             let password = Self::fmt_vec_u8_2_hex(&self.blake2b_256_psw());
 
@@ -138,11 +138,13 @@ impl User {
             .enumerate()
             .fold(String::new(), |acc, (n, i)| {
                 let mut acc = acc;
+                
                 if n == 0 {
-                    acc += &format!("{:x}", i);
+                    acc += &format!("{:02x}", i);
                 } else {
-                    acc += &format!(",{:x}", i);
+                    acc += &format!(",{:02x}", i);
                 }
+
                 acc
             })
     }
