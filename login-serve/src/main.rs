@@ -16,10 +16,10 @@ async fn main() {
 
     // POST /.../:username/:password/:timestamp
     let login_in = warp::path!("login" / "request" / "login_in" / String / String / f64)
-        .map(login_in::login_in);
+        .then(login_in::login_in);
 
     let login_up = warp::path!("login" / "request" / "login_up" / String / String / f64)
-        .map(login_up::login_up);
+        .then(login_up::login_up);
 
     let login = login_in.or(login_up).with(warp::log("LOGIN"));
 

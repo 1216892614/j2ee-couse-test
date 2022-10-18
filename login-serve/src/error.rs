@@ -4,8 +4,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("mongo data base error")]
-    DataBase(#[from] mongod::Error),
-    #[error("unknown data store error")]
-    Unknown,
+    #[error("Mongod data base error")]
+    Mongod(#[from] mongod::Error),
+    #[error("The user name intended to insert exists")]
+    UserNameExists(String),
 }

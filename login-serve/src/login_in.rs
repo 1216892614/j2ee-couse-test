@@ -4,7 +4,7 @@ use crate::static_setting::*;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
 
-pub(super) fn login_in(username: String, password: String, timestamp: f64) -> String {
+pub(super) async fn login_in(username: String, password: String, timestamp: f64) -> String {
     let now_timestamp = time::SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .expect("Time went backwards")

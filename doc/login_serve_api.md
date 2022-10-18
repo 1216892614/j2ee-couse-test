@@ -14,7 +14,7 @@ labels:
 
 - **请求方式:** post
 
-- **返回格式:** JWT
+- **返回格式:** success "SCSS", error "{msg}"
 
 - 备注
     - 校验时间戳
