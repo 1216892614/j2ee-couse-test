@@ -3,19 +3,11 @@ use std::env;
 use pretty_env_logger::init_custom_env;
 use warp::Filter;
 
+mod db;
+mod error;
 mod login_in;
 mod login_up;
 mod static_setting;
-
-#[cfg(debug_assertions)]
-const fn ipv4() -> ([u8; 4], u16) {
-    ([127, 0, 0, 1], 4040)
-}
-
-#[cfg(not(debug_assertions))]
-const fn ipv4() -> ([u8; 4], u16) {
-    ([0, 0, 0, 0], 80)
-}
 
 #[tokio::main]
 async fn main() {
@@ -31,5 +23,5 @@ async fn main() {
 
     let login = login_in.or(login_up).with(warp::log("LOGIN"));
 
-    warp::serve(login).run(ipv4()).await;
+    warp::serve(login).run(static_setting::IPV4).await;
 }

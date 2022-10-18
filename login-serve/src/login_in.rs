@@ -10,11 +10,9 @@ pub(super) fn login_in(username: String, password: String, timestamp: f64) -> St
         .expect("Time went backwards")
         .as_secs_f64();
 
-    if now_timestamp - timestamp >= ACCEPT_TIME_DIFFERENCE {
+    if now_timestamp - timestamp >= ACCEPT_TIME_DIFFERENCE && now_timestamp >= timestamp {
         return "login_serve::login_in::JWT Time Out".to_owned();
     }
-
-    
 
     if let Ok(token) = encode(
         &Header::default(),
