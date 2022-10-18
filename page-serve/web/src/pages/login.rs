@@ -8,8 +8,6 @@ mod user_data;
 mod login_in;
 mod login_up;
 
-mod login_success;
-
 mod route;
 
 #[function_component(Login)]

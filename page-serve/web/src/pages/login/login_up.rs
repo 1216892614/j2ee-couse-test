@@ -1,12 +1,12 @@
 use std::ops::Deref;
 
-use gloo::{dialogs::alert};
+use gloo::dialogs::alert;
 use wasm_bindgen::JsCast;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use super::user_data::User;
+use super::{route, user_data::User};
 
 #[function_component(LoginUp)]
 pub(super) fn login_up() -> Html {
@@ -61,15 +61,40 @@ pub(super) fn login_up() -> Html {
     };
 
     let login_state = use_state(|| String::new());
+    let history = use_history().unwrap();
 
     let submit_onclick = Callback::from(move |_| {
         let login_state = login_state.clone();
         let repeat_password_state = repeat_password_state.clone();
 
         if *repeat_password_state == user_state.deref().password {
-            user_state.deref().login_up_request(login_state);
+            let request = match user_state.deref().login_up_request() {
+                Some(r) => r,
+                None => {
+                    return;
+                }
+            };
+
+            {
+                let login_state = login_state.clone();
+                wasm_bindgen_futures::spawn_local(async move {
+                    login_state.set(request.send().await.unwrap().text().await.unwrap())
+                })
+            }
         } else {
             alert("两次密码输入不一样!");
+        }
+
+        let login_state = (*login_state).clone();
+
+        match &login_state as &str {
+            "SCSS" => {
+                alert("注册成功");
+                history.push(route::LoginRoute::LoginIn);
+            }
+            "USERNAME_ALREADY_EXISTS" => alert("用户名已存在"),
+            "SERVER_SIDE_ERROR" => alert("服务器发生错误"),
+            _ => alert("请刷新重试"),
         }
     });
 

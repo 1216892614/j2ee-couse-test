@@ -1,4 +1,4 @@
-use gloo::{console::log, dialogs::alert, net::http::Request};
+use gloo::{dialogs::alert, net::http::Request};
 use yew::UseStateHandle;
 
 use crate::api::LOGIN_SERVE;
@@ -46,59 +46,41 @@ impl User {
             && lowercase
     }
 
-    pub(super) fn login_in_request(&self, login_state: UseStateHandle<String>) {
+    pub(super) fn login_in_request(
+        &self,
+    ) -> Option<gloo::net::http::Request> {
         if self.is_password_and_username_valid() {
-            let username = Self::fmt_vec_u8_2_hex(&self.username.as_bytes());
-            let timestamp = js_sys::Date::new_0().get_time();
-            let password = Self::fmt_vec_u8_2_hex(&self.blake2b_psw_mac(timestamp));
+            let username = hex::encode(&self.username);
+            let timestamp = js_sys::Date::new_0().get_time() / 1000.0;
+            let password = hex::encode(&self.blake2b_psw_mac(timestamp));
 
-            let url = format!(
+            Some(Request::post(&format!(
                 "{}/login_in/{}/{}/{}",
                 LOGIN_SERVE, username, password, timestamp
-            );
-
-            wasm_bindgen_futures::spawn_local(async move {
-                let fetched_login_result: String = Request::post(&url)
-                    .send()
-                    .await
-                    .expect("cannot deserialization ans from .../login/request/login_in/ request")
-                    .json()
-                    .await
-                    .expect("cannot deserialization ans from .../login/request/login_in/ request");
-
-                log!(&fetched_login_result);
-
-                login_state.set(fetched_login_result);
-            })
+            )))
         } else {
-            alert("错误的账号或密码")
+            alert("错误的账号或密码");
+            None
         }
     }
 
-    pub(super) fn login_up_request(&self, login_state: UseStateHandle<String>) {
+    pub(super) fn login_up_request(
+        &self,
+    ) -> Option<gloo::net::http::Request> {
         if self.is_password_and_username_valid() {
-            let username = Self::fmt_vec_u8_2_hex(&self.username.as_bytes());
+            let username = hex::encode(&self.username);
             let timestamp = js_sys::Date::new_0().get_time();
-            let password = Self::fmt_vec_u8_2_hex(&self.blake2b_256_psw());
+            let password = hex::encode(&self.blake2b_256_psw());
 
-            wasm_bindgen_futures::spawn_local(async move {
-                let fetched_login_result: String = Request::post(
-                    &(format!(
-                        "{}/login_up/{}/{}/{}",
-                        LOGIN_SERVE, username, password, timestamp
-                    )),
-                )
-                .send()
-                .await
-                .unwrap()
-                .json()
-                .await
-                .expect("cannot deserialization ans from .../login/request/login_up/ request");
-
-                login_state.set(fetched_login_result);
-            })
+            Some(Request::post(
+                &(format!(
+                    "{}/login_up/{}/{}/{}",
+                    LOGIN_SERVE, username, password, timestamp
+                )),
+            ))
         } else {
-            alert("账号长度应在 3~125 之间\n密码需包含大小写和一个字符, 长度在 8~125 之间")
+            alert("账号长度应在 3~125 之间\n密码需包含大小写和一个字符, 长度在 8~125 之间");
+            None
         }
     }
 
@@ -131,21 +113,5 @@ impl User {
         context.input(&self.blake2b_256_psw());
 
         context.result().code().to_ascii_lowercase()
-    }
-
-    fn fmt_vec_u8_2_hex(v: &[u8]) -> String {
-        v.into_iter()
-            .enumerate()
-            .fold(String::new(), |acc, (n, i)| {
-                let mut acc = acc;
-                
-                if n == 0 {
-                    acc += &format!("{:02x}", i);
-                } else {
-                    acc += &format!(",{:02x}", i);
-                }
-
-                acc
-            })
     }
 }
