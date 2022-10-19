@@ -47,12 +47,10 @@ pub(super) fn login_in() -> Html {
         })
     };
 
-    let login_state = use_state(|| String::new());
     let history = use_history().unwrap();
 
     let submit_onclick = Callback::from(move |_| {
-        let login_state = login_state.clone();
-
+        let history = history.clone();
         let request = match user_state.deref().login_in_request() {
             Some(r) => r,
             None => {
@@ -60,28 +58,23 @@ pub(super) fn login_in() -> Html {
             }
         };
 
-        {
-            let login_state = login_state.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                login_state.set(request.send().await.unwrap().text().await.unwrap())
-            })
-        }
+        wasm_bindgen_futures::spawn_local(async move {
+            let login_state = request.send().await.unwrap().text().await.unwrap();
 
-        let login_state = (*login_state).clone();
-
-        match &login_state as &str {
-            s if s.split('.').count() == 2 => {
-                gloo::storage::SessionStorage::set("jwt", s)
-                    .expect("Unable to state jwt in SessionStorage");
-                alert("登录成功");
-                history.push(route::AppRoute::Home);
+            match &login_state as &str {
+                s if s.split('.').count() == 3 => {
+                    gloo::storage::SessionStorage::set("jwt", s)
+                        .expect("Unable to state jwt in SessionStorage");
+                    alert("登录成功");
+                    history.push(route::AppRoute::Home);
+                }
+                "INCORRECT_USERNAME_OR_PASSWORD" => alert("错误的用户名或密码"),
+                "REQUEST_TIME_OUT" => alert("请求超时, 请重新发送"),
+                "CLI_SIDE_ERROR" => alert("发生错误, 请刷新"),
+                "SERVER_SIDE_ERROR" => alert("服务器发生错误"),
+                _ => alert("请刷新重试"),
             }
-            "INCORRECT_USERNAME_OR_PASSWORD" => alert("错误的用户名或密码"),
-            "REQUEST_TIME_OUT" => alert("请求超时, 请重新发送"),
-            "CLI_SIDE_ERROR" => alert("发生错误, 请刷新"),
-            "SERVER_SIDE_ERROR" => alert("服务器发生错误"),
-            _ => alert("请刷新重试"),
-        }
+        })
     });
 
     html! {

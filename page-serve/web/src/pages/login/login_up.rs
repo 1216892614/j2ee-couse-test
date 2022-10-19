@@ -60,11 +60,11 @@ pub(super) fn login_up() -> Html {
         })
     };
 
-    let login_state = use_state(|| String::new());
     let history = use_history().unwrap();
 
     let submit_onclick = Callback::from(move |_| {
-        let login_state = login_state.clone();
+        let history = history.clone();
+
         let repeat_password_state = repeat_password_state.clone();
 
         if *repeat_password_state == user_state.deref().password {
@@ -75,26 +75,21 @@ pub(super) fn login_up() -> Html {
                 }
             };
 
-            {
-                let login_state = login_state.clone();
-                wasm_bindgen_futures::spawn_local(async move {
-                    login_state.set(request.send().await.unwrap().text().await.unwrap())
-                })
-            }
+            wasm_bindgen_futures::spawn_local(async move {
+                let login_state = request.send().await.unwrap().text().await.unwrap();
+
+                match &login_state as &str {
+                    "SCSS" => {
+                        alert("注册成功");
+                        history.push(route::LoginRoute::LoginIn);
+                    }
+                    "USERNAME_ALREADY_EXISTS" => alert("用户名已存在"),
+                    "SERVER_SIDE_ERROR" => alert("服务器发生错误"),
+                    _ => alert("请刷新重试"),
+                }
+            })
         } else {
             alert("两次密码输入不一样!");
-        }
-
-        let login_state = (*login_state).clone();
-
-        match &login_state as &str {
-            "SCSS" => {
-                alert("注册成功");
-                history.push(route::LoginRoute::LoginIn);
-            }
-            "USERNAME_ALREADY_EXISTS" => alert("用户名已存在"),
-            "SERVER_SIDE_ERROR" => alert("服务器发生错误"),
-            _ => alert("请刷新重试"),
         }
     });
 

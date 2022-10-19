@@ -1,13 +1,9 @@
 use yew::prelude::*;
 
-use crate::component::main_header;
-
 #[function_component(Home)]
 pub(super) fn home() -> Html {
     html! {
         <>
-            <main_header::MainHeader/>
-
             <center>
                 <h1
                     style="

@@ -6,12 +6,18 @@ pub(crate) mod api;
 mod pages;
 use pages::*;
 
+use crate::component::main_header;
+
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <BrowserRouter>
-            <Switch<route::AppRoute> render={Switch::render(route::app_switch)} />
-        </BrowserRouter>
+        <>
+            <main_header::MainHeader/>
+
+            <BrowserRouter>
+                <Switch<route::AppRoute> render={Switch::render(route::app_switch)} />
+            </BrowserRouter>
+        </>
     }
 }
 

@@ -1,8 +1,6 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::component::main_header;
-
 mod user_data;
 
 mod login_in;
@@ -14,8 +12,6 @@ mod route;
 pub(super) fn login() -> Html {
     html! {
             <>
-                <main_header::MainHeader/>
-
                 <div
                     style="
                     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.445);
