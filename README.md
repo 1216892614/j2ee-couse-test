@@ -15,7 +15,7 @@
 
 2. run doc server
     ```shell
-    mdbook server       # Main doc
+    mdbook serve       # Main doc
     cargo doc --open    # Code as a doc
     ```
 
