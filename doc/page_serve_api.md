@@ -8,7 +8,7 @@ labels:
 ## Get request
 
 ```
-/static path
+/:static path
 ```
 
 映射 dist 里的静态资源

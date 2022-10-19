@@ -17,3 +17,5 @@ thiserror = "1.0.37"
 tokio = {version = "1.20.1", features = ["full"]}
 mongod = { version = "0.3.3", features = ["derive"] }
 warp = "0.3.2"
+hex = "0.4.3"
+rand = "0.8.5"
