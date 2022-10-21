@@ -12,9 +12,9 @@ use crate::component::main_header;
 fn app() -> Html {
     html! {
         <>
-            <main_header::MainHeader/>
-
+        
             <BrowserRouter>
+                <main_header::MainHeader/>
                 <Switch<route::AppRoute> render={Switch::render(route::app_switch)} />
             </BrowserRouter>
         </>

@@ -18,5 +18,5 @@ cryptoxide = "0.4.2"
 hex = "0.4.3"
 
 [dependencies.web-sys]
-features = ["HtmlInputElement"]
+features = ["HtmlInputElement", "HtmlDivElement"]
 version = "0.3.59"
