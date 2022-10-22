@@ -1,2 +1,2 @@
 pub(crate) mod main_header;
-pub(crate) mod lazy_for;
+pub(crate) mod infinite_for;
